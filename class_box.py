@@ -14,10 +14,6 @@ from functools import lru_cache
 import datetime
 import os
 
-#讀取寫入的Json檔案位置
-# json_path = r"state\current_box.json"                       # 存儲語音房資訊
-# register_owner_leave = r"state\register_owner_leave.json"   # 登記目前離開語音房的擁有者
-
 path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state")    # 取得state資料夾的路徑
 json_path = os.path.join(path, "current_box.json")                          # 存儲語音房資訊
 register_owner_leave = os.path.join(path, "register_owner_leave.json")      # 登記目前離開語音房的擁有者
