@@ -12,11 +12,32 @@
 import json
 from functools import lru_cache
 import datetime
+import os
 
 #讀取寫入的Json檔案位置
-json_path = r"state\current_box.json"                       # 存儲語音房資訊
-register_owner_leave = r"state\register_owner_leave.json"   # 登記目前離開語音房的擁有者
+# json_path = r"state\current_box.json"                       # 存儲語音房資訊
+# register_owner_leave = r"state\register_owner_leave.json"   # 登記目前離開語音房的擁有者
 
+path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "state")    # 取得state資料夾的路徑
+json_path = os.path.join(path, "current_box.json")                          # 存儲語音房資訊
+register_owner_leave = os.path.join(path, "register_owner_leave.json")      # 登記目前離開語音房的擁有者
+
+# 檢查state資料夾是否存在
+if not os.path.exists(path):
+    os.makedirs(path)  # 如果不存在，則創建資料夾
+
+# 檢查json_path.json是否存在
+if not os.path.exists(json_path):
+    with open(json_path, "w", encoding="utf-8") as file:
+        json.dump({}, file, ensure_ascii=False, indent=4)  # 初始化語音房資訊檔案
+
+# 檢查register_owner_leave.json是否存在
+if not os.path.exists(register_owner_leave):
+    with open(register_owner_leave, "w", encoding="utf-8") as file:
+        data = {
+            "currently_absent": []  # 初始化目前離開語音房的擁有者列表
+        }
+        json.dump(data, file, ensure_ascii=False, indent=4)  # 初始化擁有者離開語音房檔案
 
 def load_data(): # 讀取Json檔案 (語音房資料)
     with open(json_path, "r", encoding="utf-8") as file:
