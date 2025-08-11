@@ -121,7 +121,7 @@ class app_box: #創建語音房
             print(f"錯誤: {self.channel_id} 語音房不存在，無法刪除")
             return
 
-    def app_permissions(self, member: int): # 新增權限
+    def add_permissions(self, member: int): # 新增權限
 
         data = load_data()
         if data != None:
@@ -129,6 +129,7 @@ class app_box: #創建語音房
             permissions.append(member)
             data.get(str(self.channel_id)).update({"permissions": permissions})
 
+            save_data(data) # 儲存Json資料
             self.permissions = permissions
             return
         
@@ -144,6 +145,7 @@ class app_box: #創建語音房
             permissions.remove(member)
             data.get(str(self.channel_id)).update({"permissions": permissions})
 
+            save_data(data) # 儲存Json資料
             self.permissions = permissions
             return
         
@@ -151,7 +153,7 @@ class app_box: #創建語音房
             print(f"錯誤: {self.channel_id} 語音房不存在，無法對 {member} 刪除權限")
             return
 
-    def app_blacklist(self, member: int): # 新增黑名單
+    def add_blacklist(self, member: int): # 新增黑名單
 
         data = load_data()
         if data != None:
@@ -159,6 +161,7 @@ class app_box: #創建語音房
             blacklist.append(member)
             data.get(str(self.channel_id)).update({"blacklist": blacklist})
 
+            save_data(data) # 儲存Json資料
             self.blacklist = blacklist
             return
         
@@ -174,6 +177,7 @@ class app_box: #創建語音房
             blacklist.remove(member)
             data.get(str(self.channel_id)).update({"blacklist": blacklist})
 
+            save_data(data) # 儲存Json資料
             self.blacklist = blacklist
             return
 
@@ -181,7 +185,7 @@ class app_box: #創建語音房
             print(f"錯誤: {self.channel_id} 語音房不存在，無法對 {member} 刪除黑名單")
             return
 
-    def app_whitelist(self, member: int): # 新增白名單
+    def add_whitelist(self, member: int): # 新增白名單
 
         data = load_data()
         if data != None:
@@ -189,6 +193,7 @@ class app_box: #創建語音房
             whitelist.append(member)
             data.get(str(self.channel_id)).update({"whitelist": whitelist})
 
+            save_data(data) # 儲存Json資料
             self.whitelist = whitelist
             return
         
@@ -204,6 +209,7 @@ class app_box: #創建語音房
             whitelist.remove(member)
             data.get(str(self.channel_id)).update({"whitelist": whitelist})
 
+            save_data(data) # 儲存Json資料
             self.whitelist = whitelist
             return
 
@@ -215,7 +221,8 @@ class app_box: #創建語音房
         data = load_data()
         if data != None:
             data.get(str(self.channel_id)).update({"owner": member})
-            save_data(data)
+
+            save_data(data) # 儲存Json資料
             self.owner = member
             return
         
@@ -248,7 +255,7 @@ class app_box: #創建語音房
             else:
                 # 修改current_box.json的資料
                 data.get(str(self.channel_id)).update({"quit_owner_time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")})
-                save_data(data)
+                save_data(data) # 儲存Json資料
 
                 # 修改register_owner_leave.json的資料
                 if self.channel_id not in register_list:
