@@ -15,9 +15,28 @@ from discord.ext import commands, tasks
 import datetime
 import random
 import json
+import os
 
-token_path = "token.json" # 機器人token資料的位置
-config = "config.json" # 設定檔位置
+path = os.path.dirname(os.path.abspath(__file__))   # 取得目前檔案的路徑
+token_path = os.path.join(path, "token.json")       # 機器人token資料的位置
+config = os.path.join(path, "config.json")          # 設定檔位置
+
+# 檢查token檔案是否存在
+if not os.path.exists(token_path):
+    with open(token_path, 'w', encoding='utf-8') as file:
+        token_data = {
+            "token": "Yor_bot_token"
+        }
+        json.dump(token_data, file, indent=4)
+
+# 檢查設定檔是否存在
+if not os.path.exists(config):
+    with open(config, 'w', encoding='utf-8') as file:
+        config_data = {
+            "box_id": 123456789012345678,
+            "categorychannel_id": 123456789012345678
+        }
+        json.dump(config_data, file, indent=4)
 
 # 讀取機器人的token
 with open(token_path, 'r', encoding='utf-8') as file:
