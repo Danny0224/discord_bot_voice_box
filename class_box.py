@@ -275,6 +275,14 @@ class app_box: #創建語音房
         else:
             print(f"錯誤: {self.channel_id} 語音房不存在，無法查看 {member} 是否有操作權")
             return False
+        
+    def is_owner(self, member: int): # 查看某位成員是否為擁有者
+        if self.exist: #查看頻道是否存在
+
+            if member == self.owner:
+                return True
+            else:
+                return False
 
 class box_id(app_box):
     def __init__(self, channel_id: int): #指定語音房
