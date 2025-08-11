@@ -224,6 +224,56 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
         return
     
     await 成員.move_to(None)
+
+    embed = discord.Embed(title=f"已踢出成員✅",
+                        colour=0x17c101)
+    embed.add_field(name=f"踢出成員: {成員.display_name}",
+                    value="",
+                    inline=False)
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="給予權限", description="給予成員語音房操作權")
+@app_commands.describe(成員 = "指定一位成員")
+async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Member):
+    voice_channel = class_box.box_id(interaction.channel.id)
+
+    # 檢查是否在語音房輸入指令
+    if voice_channel.exist != True: 
+        embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    # 檢查使用者是否有權限
+    elif voice_channel.is_owner(interaction.user.id) != True: 
+        embed = discord.Embed(title="有只有這〔語音房〕的〔擁有者〕才可以這樣做!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    # 檢查要給予權限的人是否在語音房
+    elif 成員 not in interaction.channel.members:
+        embed = discord.Embed(title="你無法給予不在〔語音房〕的人權限!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    # 檢查要給予權限的人是否已經有權限
+    elif voice_channel.have_permission(成員.id) == True:
+        embed = discord.Embed(title="這個成員已經有〔語音房操作權〕了!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    voice_channel.add_permissions(成員.id)
+
+    embed = discord.Embed(title=f"成功給予語音房操作權🎉",
+                      colour=0x17c101)
+    embed.add_field(name=f"給予成員: {成員.display_name}",
+                    value="",
+                    inline=False)
+    
+    await interaction.response.send_message(embed=embed)
         
 # 程式末尾 載入機器人token
 bot.run(token)
