@@ -148,7 +148,7 @@ async def replace_owner():
                 voice_channel.edit_quit_owner_time(True)
                 channel_bot = bot.get_channel(voice_channel.channel_id)
                 member = bot.get_user(voice_channel.owner)
-            else:
+            else: # 如果沒有權限的人就隨機給予一個人
                 channel_bot = bot.get_channel(voice_channel.channel_id)
                 voice_channel.edit_owner(channel_bot.members[random.randint(0, len(channel_bot.members)-1)].id)
                 voice_channel.edit_quit_owner_time(True)
@@ -270,6 +270,49 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     embed = discord.Embed(title=f"成功給予語音房操作權🎉",
                       colour=0x17c101)
     embed.add_field(name=f"給予成員: {成員.display_name}",
+                    value="",
+                    inline=False)
+    
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="移除權限", description="移除成員語音房操作權")
+@app_commands.describe(成員 = "指定一位成員")
+async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Member):
+    voice_channel = class_box.box_id(interaction.channel.id)
+
+    # 檢查是否在語音房輸入指令
+    if voice_channel.exist != True: 
+        embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    # 檢查使用者是否有權限
+    elif voice_channel.have_permission(interaction.user.id) != True: 
+        embed = discord.Embed(title="你沒有這〔語音房〕的〔操作權〕!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    # 只有自己的權限可以移除，除非是房主
+    elif voice_channel.have_permission(成員.id) == True and voice_channel.owner != interaction.user.id:
+        embed = discord.Embed(title="你不能移除有〔操作權〕的人，除非你是〔房主〕!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+
+    # 檢查要移除權限的人是否沒有權限
+    elif voice_channel.have_permission(成員.id) == False:
+        embed = discord.Embed(title="這個成員沒有〔語音房操作權〕了!",
+                      colour=0xc10101)
+        await interaction.response.send_message(embed=embed ,ephemeral=True)
+        return
+    
+    voice_channel.delete_permissions(成員.id)
+
+    embed = discord.Embed(title=f"成功移除語音房操作權🎉",
+                      colour=0x17c101)
+    embed.add_field(name=f"移除成員: {成員.display_name}",
                     value="",
                     inline=False)
     
