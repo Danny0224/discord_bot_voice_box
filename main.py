@@ -64,6 +64,7 @@ async def on_ready():
     
     for i in class_box.all_box(): # 檢查包廂式是否是空的
         channel = bot.get_channel(i)
+        voice_channel = class_box.box_id(i)
         if channel.members == []: # 如果是空的就刪除
             if i in class_box.register_owner_leave_list():
                 voice_channel.edit_quit_owner_time(True)
