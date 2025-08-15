@@ -47,7 +47,7 @@ token = data.get("token")
 with open(config, 'r', encoding='utf-8') as file:
     data = json.load(file)
 box_id = data.get("box_id")
-categorychannel_id = data.get("categorychannel_id")
+category_channel_id = data.get("categorychannel_id")
 
 
 # 權限設定
