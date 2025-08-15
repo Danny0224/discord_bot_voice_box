@@ -10,7 +10,6 @@
 
 #程式庫導入
 import json
-from functools import lru_cache
 import datetime
 import os
 
