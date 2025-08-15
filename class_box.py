@@ -4,13 +4,12 @@
     此程式負責幫助主程式方便調取josn的資料
     主程式 ---> [類別物件] ---> json
     製作人 : Danny0224
-    2024 / 10 / 19
+    2025 / 08 / 16
 
 """
 
 #程式庫導入
 import json
-from functools import lru_cache
 import datetime
 import os
 
