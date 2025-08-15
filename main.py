@@ -47,7 +47,7 @@ token = data.get("token")
 with open(config, 'r', encoding='utf-8') as file:
     data = json.load(file)
 box_id = data.get("box_id")
-categorychannel_id = data.get("categorychannel_id")
+category_channel_id = data.get("categorychannel_id")
 
 
 # 權限設定
@@ -58,10 +58,10 @@ bot = commands.Bot(command_prefix = "!", intents = intents)
 
 # 程式啟動時執行的程式
 @bot.event
-async def on_ready(): 
+async def on_ready():
     await bot.tree.sync() # 重新載入指令
     print(f"目前機器人 >>> {bot.user} <<<<")
-    
+
     for i in class_box.all_box(): # 檢查包廂式是否是空的
         channel = bot.get_channel(i)
         voice_channel = class_box.box_id(i)
@@ -71,13 +71,13 @@ async def on_ready():
             voice_channel = class_box.box_id(i)
             await channel.delete()
             voice_channel.delete()
-            
+
     for i in class_box.register_owner_leave_list(): # 如果檢查到房主回來的話
         voice_channel = class_box.box_id(i)
         channel_bot = bot.get_channel(i)
         if voice_channel.owner in [i.id for i in channel_bot.members]:
             voice_channel.edit_quit_owner_time(True)
-    
+
     replace_owner.start()
 
 # 檢測成員進出語音頻道
@@ -94,9 +94,9 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                     channel = bot.get_channel(channel_id)
                     await member.move_to(channel)
                     return
-            
+
             # 創建語音房
-            category_channel = bot.get_channel(categorychannel_id) 
+            category_channel = bot.get_channel(category_channel_id)
             voice_channel = await category_channel.create_voice_channel(f"║🔊║{member.display_name}的語音")
             await member.move_to(voice_channel)
 
@@ -111,11 +111,11 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
 
             await voice_channel.send(embed=embed)
             return # 回傳
-        
+
         elif voice_channel.exist and member.id == voice_channel.owner: # 當房主回到自己的語音房時
             if voice_channel.quit_owner_time != None:
                 voice_channel.edit_quit_owner_time(True)
-    
+
 
     if before.channel != None: # 當有人離開語音時
 
@@ -127,21 +127,21 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
                 await before.channel.delete()
                 voice_channel.delete()
                 return # 回傳
-        
+
             elif member.id == voice_channel.owner: # 如果房主離開語音房
                 if class_box.register_owner_leave_list() == []:
                     replace_owner.start()
                 voice_channel.edit_quit_owner_time(False)
                 return # 回傳
-            
+
 @tasks.loop(seconds=1)
 async def replace_owner():
     if class_box.register_owner_leave_list() == []:
         replace_owner.cancel()
 
-    for channel in class_box.register_owner_leave_list(): 
+    for channel in class_box.register_owner_leave_list():
         voice_channel = class_box.box_id(channel)
-        time = datetime.datetime.strptime(voice_channel.quit_owner_time, "%Y-%m-%d %H:%M:%S") 
+        time = datetime.datetime.strptime(voice_channel.quit_owner_time, "%Y-%m-%d %H:%M:%S")
         if time + datetime.timedelta(minutes=5) <= datetime.datetime.now(): # 當房主離開自己的語音房超過5分鐘時
             if voice_channel.permissions != []: # 優先給有權限的人
                 voice_channel.edit_owner(voice_channel.permissions[0])
@@ -165,16 +165,16 @@ async def replace_owner():
 @app_commands.describe(名稱 = "語音頻道名稱")
 async def edit_channel_name(interaction: discord.Interaction, 名稱: str):
     voice_channel = class_box.box_id(interaction.channel.id)
-    
+
     # 檢查是否在語音房輸入指令
-    if voice_channel.exist != True: 
+    if voice_channel.exist != True:
         embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查使用指令的人是否有權限
-    elif voice_channel.have_permission(interaction.user.id) != True: 
+    elif voice_channel.have_permission(interaction.user.id) != True:
         embed = discord.Embed(title="你沒有這〔語音房〕的〔操作權〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
@@ -197,19 +197,19 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     channel_bot = bot.get_channel(interaction.channel.id)
 
     # 檢查是否是在語音房輸入指令
-    if voice_channel.exist != True: 
+    if voice_channel.exist != True:
         embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查使用者是否有權限
-    elif voice_channel.have_permission(interaction.user.id) != True: 
+    elif voice_channel.have_permission(interaction.user.id) != True:
         embed = discord.Embed(title="你沒有這〔語音房〕的〔操作權〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查要被踢出的人是否在語音房
     elif 成員 not in channel_bot.members:
         embed = discord.Embed(title="你無法踢出不在〔語音房〕的人!",
@@ -223,7 +223,7 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     await 成員.move_to(None)
 
     embed = discord.Embed(title=f"已踢出成員✅",
@@ -239,33 +239,33 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     voice_channel = class_box.box_id(interaction.channel.id)
 
     # 檢查是否在語音房輸入指令
-    if voice_channel.exist != True: 
+    if voice_channel.exist != True:
         embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查使用者是否有權限
-    elif voice_channel.is_owner(interaction.user.id) != True: 
+    elif voice_channel.is_owner(interaction.user.id) != True:
         embed = discord.Embed(title="有只有這〔語音房〕的〔擁有者〕才可以這樣做!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查要給予權限的人是否在語音房
     elif 成員 not in interaction.channel.members:
         embed = discord.Embed(title="你無法給予不在〔語音房〕的人權限!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查要給予權限的人是否已經有權限
     elif voice_channel.have_permission(成員.id) == True:
         embed = discord.Embed(title="這個成員已經有〔語音房操作權〕了!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     voice_channel.add_permissions(成員.id)
 
     embed = discord.Embed(title=f"成功給予語音房操作權🎉",
@@ -273,7 +273,7 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     embed.add_field(name=f"給予成員: {成員.display_name}",
                     value="",
                     inline=False)
-    
+
     await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name="移除權限", description="移除成員語音房操作權")
@@ -282,19 +282,19 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     voice_channel = class_box.box_id(interaction.channel.id)
 
     # 檢查是否在語音房輸入指令
-    if voice_channel.exist != True: 
+    if voice_channel.exist != True:
         embed = discord.Embed(title="請在〔語音房文字頻道〕輸入〔指令〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 檢查使用者是否有權限
-    elif voice_channel.have_permission(interaction.user.id) != True: 
+    elif voice_channel.have_permission(interaction.user.id) != True:
         embed = discord.Embed(title="你沒有這〔語音房〕的〔操作權〕!",
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     # 只有自己的權限可以移除，除非是房主
     elif voice_channel.have_permission(成員.id) == True and voice_channel.owner != interaction.user.id:
         embed = discord.Embed(title="你不能移除有〔操作權〕的人，除非你是〔房主〕!",
@@ -308,7 +308,7 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
                       colour=0xc10101)
         await interaction.response.send_message(embed=embed ,ephemeral=True)
         return
-    
+
     voice_channel.delete_permissions(成員.id)
 
     embed = discord.Embed(title=f"成功移除語音房操作權🎉",
@@ -316,8 +316,8 @@ async def edit_channel_name(interaction: discord.Interaction, 成員: discord.Me
     embed.add_field(name=f"移除成員: {成員.display_name}",
                     value="",
                     inline=False)
-    
+
     await interaction.response.send_message(embed=embed)
-        
+
 # 程式末尾 載入機器人token
 bot.run(token)
