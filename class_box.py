@@ -156,9 +156,16 @@ class app_box: #創建語音房
 
         data = load_data()
         if data != None:
-            blacklist: list = data.get(str(self.channel_id)).gat("blacklist")
+            channel_data = data.get(str(self.channel_id))
+            if channel_data == None:
+                print(f"錯誤: {self.channel_id} 語音房不存在，無法對 {member} 添加黑名單")
+                return
+
+            blacklist: list = channel_data.get("blacklist")
             blacklist.append(member)
-            data.get(str(self.channel_id)).update({"blacklist": blacklist})
+            channel_data.update({"blacklist": blacklist})
+
+            data.update({str(self.channel_id): channel_data})
 
             save_data(data) # 儲存Json資料
             self.blacklist = blacklist
