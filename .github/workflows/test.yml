@@ -1,18 +1,15 @@
 name: "Text"
 
-on: 
+on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
-    branches:
-      - main
-    types: [ opened ]
-  
-  
-jobs: 
+    branches: [ main ]
+    types: [opened, synchronize, reopened]
+
+jobs:
   test:
-  runs-on: ubuntu-latest
-  steps:
-  - name: 是否安裝python
-    run: python --version
+    runs-on: ubuntu-latest
+    steps:
+      - name: 是否安裝 python
+        run: python --version
