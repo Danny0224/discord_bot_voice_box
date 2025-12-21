@@ -12,8 +12,7 @@ on:
   
 jobs: 
   test:
-    steps:
-      runs-on: ubuntu-latest
-      steps:
-      - name: 是否安裝python
-        run: python --version
+  runs-on: ubuntu-latest
+  steps:
+  - name: 是否安裝python
+    run: python --version
