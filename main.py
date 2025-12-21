@@ -59,7 +59,6 @@ bot = commands.Bot(command_prefix = "!", intents = intents)
 # 程式啟動時執行的程式
 @bot.event
 async def on_ready():
-p()
     await bot.tree.sync() # 重新載入指令
     print(f"目前機器人 >>> {bot.user} <<<<")
 
