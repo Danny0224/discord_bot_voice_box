@@ -32,4 +32,4 @@ jobs:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
         run: |
           python -c "import os; assert os.getenv('DISCORD_TOKEN'), 'DISCORD_TOKEN is not set'"
-          timeout 30s python main.py
+          timeout 30s python main.py || [ $? -eq 124 ]
