@@ -11,18 +11,25 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: 獲取程式
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: 安裝 Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name: 安裝依賴項目
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run syntax check
+      - name: 檢查於法
         run: python -m compileall .
+
+      - name: 運行機器人 (冒煙測試)
+        env:
+          DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
+        run: |
+          python -c "import os; assert os.getenv('DISCORD_TOKEN'), 'DISCORD_TOKEN is not set'"
+          timeout 30s python main.py

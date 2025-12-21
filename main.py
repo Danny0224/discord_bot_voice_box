@@ -41,7 +41,7 @@ if not os.path.exists(config):
 # 讀取機器人的token
 with open(token_path, 'r', encoding='utf-8') as file:
     data = json.load(file)
-token = data.get("token")
+token = data.get("token") if data.get("token")=="Yor_bot_token" else os.getenv("DISCORD_TOKEN")
 
 # 讀取設定檔位置
 with open(config, 'r', encoding='utf-8') as file:
